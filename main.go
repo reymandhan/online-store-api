@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/reymandhan/online-store-api/cart"
 	validator "github.com/reymandhan/online-store-api/common"
 	"github.com/reymandhan/online-store-api/configs"
 	"github.com/reymandhan/online-store-api/db"
@@ -51,6 +52,12 @@ func main() {
 	router.HandleFunc("/item", itemHandler.Create).Methods(http.MethodPost)
 	router.HandleFunc("/item/{id}", itemHandler.Update).Methods(http.MethodPut)
 	router.HandleFunc("/item/{id}", itemHandler.Delete).Methods(http.MethodDelete)
+
+	cartItemHandler := cart.NewCartItemHandler()
+	router.HandleFunc("/cart/item", cartItemHandler.Get).Methods(http.MethodGet)
+	router.HandleFunc("/cart/add", cartItemHandler.Create).Methods(http.MethodPost)
+	router.HandleFunc("/cart/item/{id}", cartItemHandler.Delete).Methods(http.MethodDelete)
+	router.HandleFunc("/cart", cartItemHandler.GetByUsername).Methods(http.MethodGet)
 
 	http.ListenAndServe(configs.Global.Port, router)
 }

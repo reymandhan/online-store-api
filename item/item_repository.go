@@ -19,7 +19,13 @@ func NewItemRepository() *ItemRepository {
 
 const (
 	querySelectItem = `SELECT 
-		*
+		id,
+		name,
+		sku,
+		price,
+		qty,
+		created_at,
+		updated_at
 	FROM public.items `
 
 	queryInsertItem = `INSERT INTO public.items (
