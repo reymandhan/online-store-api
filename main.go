@@ -5,8 +5,10 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/reymandhan/online-store-api/app/db"
+	validator "github.com/reymandhan/online-store-api/common"
 	"github.com/reymandhan/online-store-api/configs"
+	"github.com/reymandhan/online-store-api/db"
+	"github.com/reymandhan/online-store-api/item"
 )
 
 func main() {
@@ -17,6 +19,15 @@ func main() {
 		configs.Global.Database.Password,
 		configs.Global.Database.Name,
 		configs.Global.Database.SSLMode)
+
+	db.Migrate(configs.Global.Database.Host,
+		configs.Global.Database.Port,
+		configs.Global.Database.Username,
+		configs.Global.Database.Password,
+		configs.Global.Database.Name,
+		configs.Global.Database.SSLMode)
+
+	validator.Init()
 
 	router := mux.NewRouter().
 		PathPrefix(configs.Global.APIPrefix).
@@ -30,10 +41,16 @@ func main() {
 		})
 	})
 
-	// HealthCheck endpoint
+	// Health check endpoint
 	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		json.NewEncoder(w).Encode(map[string]bool{"ok": true})
+		json.NewEncoder(w).Encode(map[string]bool{"app": true, "db": db.Ping()})
 	}).Methods(http.MethodGet)
+
+	itemHandler := item.NewItemHandler()
+	router.HandleFunc("/item", itemHandler.Get).Methods(http.MethodGet)
+	router.HandleFunc("/item", itemHandler.Create).Methods(http.MethodPost)
+	router.HandleFunc("/item/{id}", itemHandler.Update).Methods(http.MethodPut)
+	router.HandleFunc("/item/{id}", itemHandler.Delete).Methods(http.MethodDelete)
 
 	http.ListenAndServe(configs.Global.Port, router)
 }
