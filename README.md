@@ -13,6 +13,7 @@ After checking in with our Customer Service and Order Processing departments, we
 - Because of these misreported inventory quantities, the Order Processing department was unable to fulfill a lot of orders, and thus requested help from our Customer Service department to call our customers and notify them that we have had to cancel their orders
 <br/>
 <br/>
+
 ## Analysis
 Based on the facts above, 
 - Customers might have not provided with real time inventory quantity.
