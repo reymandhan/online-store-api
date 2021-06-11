@@ -12,6 +12,7 @@ import (
 type OrderService interface {
 	Checkout(request CreateOrderRequest) (err error)
 	GetByID(id int) (userOrder UserOrder, err error)
+	GetByUsername(username string) (userOrder UserOrder, err error)
 	Pay(id int) error
 }
 
@@ -89,6 +90,25 @@ func (o *orderService) GetByID(id int) (UserOrder, error) {
 	return result, err
 }
 
+func (o *orderService) GetByUsername(username string) (UserOrder, error) {
+	var result UserOrder
+	order, err := o.orderRepository.GetByUsername(username)
+
+	if err != nil {
+		return result, errors.New(fmt.Sprintf("Order by username: %v is not exists", username))
+	}
+
+	orderItems, err := o.orderItemRepository.GetByOrderID(order.ID)
+
+	result.ID = order.ID
+	result.Username = order.Username
+	result.Address = order.Address
+	result.TotalPrice = order.TotalPrice
+	result.Status = order.Status
+	result.OrderItems = orderItems
+	return result, err
+}
+
 func (o *orderService) Pay(id int) error {
 	order, err := o.orderRepository.GetByID(id)
 
@@ -104,12 +124,10 @@ func (o *orderService) Pay(id int) error {
 
 	// start transaction and lock to be updated row
 	tx := o.orderRepository.BeginTx()
-
+	log.Println(fmt.Sprintf("Start process for %v", order.Username))
 	for _, orderItem := range orderItems {
 		item, err := o.itemRepository.GetByIDWithLock(orderItem.ItemID, tx)
-		log.Print(item)
 		if err != nil {
-			log.Print(err)
 			tx.Rollback()
 			return err
 		}
@@ -124,29 +142,25 @@ func (o *orderService) Pay(id int) error {
 	log.Print("Update Order status")
 	_, err = o.orderRepository.Update(id, "PAID", tx)
 	if err != nil {
-		log.Print(err)
 		tx.Rollback()
 		return err
 	}
 
 	// Clean up cart and cart item for the user
-	log.Print("Clean cart")
+	log.Println(fmt.Sprintf("Clean cart for %v", order.Username))
 	cart, err := o.cartRepository.GetByUsername(order.Username)
 	err = o.cartItemRepository.DeleteByCartId(cart.ID, tx)
 	if err != nil {
-		log.Print(err)
 		tx.Rollback()
 		return err
 	}
 	err = o.cartRepository.DeleteById(cart.ID, tx)
 	if err != nil {
-		log.Print(err)
 		tx.Rollback()
 		return err
 	}
 
 	tx.Commit()
-	log.Print("Success")
-
+	log.Println(fmt.Sprintf("End process for %v", order.Username))
 	return err
 }

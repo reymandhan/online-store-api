@@ -62,6 +62,11 @@ func (c *OrderRepository) GetByID(id int) (order Order, err error) {
 	return
 }
 
+func (c *OrderRepository) GetByUsername(username string) (order Order, err error) {
+	err = c.DB.Get(&order, querySelectOrder+" WHERE username = $1", username)
+	return
+}
+
 func (c *OrderRepository) Update(id int, status string, tx *sqlx.Tx) (*Order, error) {
 	var result Order
 	err := tx.QueryRowx(queryUpdateOrder,

@@ -40,7 +40,7 @@ Payment process implemented as following:
 - Retrieve Order and Order Item data
 - Create Transaction for row lock
 - Iterate Order Item
-    - Retrieve item to get stock quantity with lock row (to block concurrect read and update)
+    - Retrieve item to get stock quantity with lock row (to block concurrect read and update for this item)
     - If stock not available (or not enough) return error, stop process
     - If stock available, update stock quantity reduced with paid item quantity, then continue process
 - Update order status
@@ -51,6 +51,37 @@ Payment process implemented as following:
 
 <br/>
 
-## Prerequisite to run
-- Docker
+## How to run
+### Docker
+- Open terminal/console
+- Go to root directory of this code
+- Run the app with `docker-compose up`
+
+### Go
+- make sure Postgres DB installed and running on local
+- go version 1.16
+- Open terminal/console
+- Go to root directory of this code
+- Copy `.env.example` and rename it `.env`
+- Set your local Postgres credential on newly created `.env` file
+- Download dependency with `go mod tidy`
+- Run the app with `go run .`
+
+Every time app run it will run migration (only once) and seed initial data.
+to make sure app run and connected to DB, open browser access `localhost:8080/api/v1/health`, check the response.
+
+## Test
+Seed data will create product, cart and cart item.
+Functional test will execute checkout and payment for those initial data.<br/>
+There are 5 user that will pay concurrently, One of product will run out of stock.
+One (or more) user will be failed to pay because of stock unavailable.
+
+To run test, after run the app, run `go test`.
+Re-run the test might have different result (depend on which user payment processed first).
+To Re-run the test, re-run app first to refresh the data then run `go test` again
+
+<br/>
+
+Also postman collection ("Online Store.postman_collection.json") provided for all endpoint on this app 
+
 

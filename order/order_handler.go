@@ -13,6 +13,7 @@ type OrderHandler interface {
 	Create(w http.ResponseWriter, r *http.Request)
 	GetByID(w http.ResponseWriter, r *http.Request)
 	Pay(w http.ResponseWriter, r *http.Request)
+	GetByUsername(w http.ResponseWriter, r *http.Request)
 }
 
 type handler struct {
@@ -50,6 +51,17 @@ func (o *handler) GetByID(w http.ResponseWriter, r *http.Request) {
 	idOrder, err := strconv.Atoi(id)
 
 	res, err := o.orderService.GetByID(idOrder)
+	if err != nil {
+		common.GenerateFailedResponse(w, "Error", err)
+	} else {
+		common.GenerateOKSuccessResponse(w, "Data Retrieved", res)
+	}
+}
+
+func (o *handler) GetByUsername(w http.ResponseWriter, r *http.Request) {
+	username := r.URL.Query().Get("username")
+
+	res, err := o.orderService.GetByUsername(username)
 	if err != nil {
 		common.GenerateFailedResponse(w, "Error", err)
 	} else {

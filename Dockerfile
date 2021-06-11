@@ -27,6 +27,8 @@ FROM scratch
 
 # Copy the Pre-built binary file
 COPY --from=builder /app/bin/main .
+COPY --from=builder /app/.env .
+COPY --from=builder /app/db /db
 
 # Run executable
 CMD ["./main"]

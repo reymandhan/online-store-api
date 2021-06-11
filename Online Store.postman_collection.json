@@ -1,0 +1,314 @@
+{
+	"info": {
+		"_postman_id": "a95facb7-5ea5-413a-8918-6b9a022f8c33",
+		"name": "Online Store",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Item",
+			"item": [
+				{
+					"name": "Retrieve all item",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/item",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"item"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new item",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Product B\",\r\n    \"sku\": \"SKU0000002\",\r\n    \"price\": 25000,\r\n    \"qty\": 100\r\n}"
+						},
+						"url": {
+							"raw": "{{host}}/item",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"item"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update item",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Product A new\",\r\n    \"sku\": \"SKU0000002\",\r\n    \"price\": 77000,\r\n    \"qty\": 5\r\n}"
+						},
+						"url": {
+							"raw": "{{host}}/item/1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"item",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete item",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/item/1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"item",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "Get All Cart Item",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/cart/item",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"cart",
+								"item"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cart by Username",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/cart?username=user_1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"cart"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "user_1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add item to cart",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"user_1\",\r\n    \"item_id\": 7,\r\n    \"qty\": 40\r\n}"
+						},
+						"url": {
+							"raw": "{{host}}/cart/add",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"cart",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete cart item",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/cart/item/20",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"cart",
+								"item",
+								"20"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "Checkout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"user_1\",\r\n    \"address\": \"Building no 2. Jakarta\"\r\n}"
+						},
+						"url": {
+							"raw": "{{host}}/order/checkout",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"order",
+								"checkout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Order by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/order/detail/3",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"order",
+								"detail",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pay",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/order/pay/3",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"order",
+								"pay",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Order by Username",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/order?username=user_1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"order"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "user_1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/health",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

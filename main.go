@@ -29,6 +29,13 @@ func main() {
 		configs.Global.Database.Name,
 		configs.Global.Database.SSLMode)
 
+	db.InitSeed(configs.Global.Database.Host,
+		configs.Global.Database.Port,
+		configs.Global.Database.Username,
+		configs.Global.Database.Password,
+		configs.Global.Database.Name,
+		configs.Global.Database.SSLMode)
+
 	validator.Init()
 
 	router := mux.NewRouter().
@@ -64,6 +71,7 @@ func main() {
 	router.HandleFunc("/order/checkout", orderHandler.Create).Methods(http.MethodPost)
 	router.HandleFunc("/order/detail/{id}", orderHandler.GetByID).Methods(http.MethodGet)
 	router.HandleFunc("/order/pay/{id}", orderHandler.Pay).Methods(http.MethodPut)
+	router.HandleFunc("/order", orderHandler.GetByUsername).Methods(http.MethodGet)
 
 	http.ListenAndServe(configs.Global.Port, router)
 }
