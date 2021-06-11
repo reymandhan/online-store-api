@@ -10,6 +10,7 @@ import (
 	"github.com/reymandhan/online-store-api/configs"
 	"github.com/reymandhan/online-store-api/db"
 	"github.com/reymandhan/online-store-api/item"
+	"github.com/reymandhan/online-store-api/order"
 )
 
 func main() {
@@ -58,6 +59,11 @@ func main() {
 	router.HandleFunc("/cart/add", cartItemHandler.Create).Methods(http.MethodPost)
 	router.HandleFunc("/cart/item/{id}", cartItemHandler.Delete).Methods(http.MethodDelete)
 	router.HandleFunc("/cart", cartItemHandler.GetByUsername).Methods(http.MethodGet)
+
+	orderHandler := order.NewOrderHandler()
+	router.HandleFunc("/order/checkout", orderHandler.Create).Methods(http.MethodPost)
+	router.HandleFunc("/order/detail/{id}", orderHandler.GetByID).Methods(http.MethodGet)
+	router.HandleFunc("/order/pay/{id}", orderHandler.Pay).Methods(http.MethodPut)
 
 	http.ListenAndServe(configs.Global.Port, router)
 }

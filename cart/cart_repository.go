@@ -28,6 +28,8 @@ const (
 		SET total_price = $1,
 		updated_at = now() 
 		WHERE username = $2 RETURNING *;`
+
+	queryDeleteCart = `DELETE FROM public.carts `
 )
 
 func (c *CartRepository) BeginTx() *sqlx.Tx {
@@ -67,4 +69,9 @@ func (c *CartRepository) Update(username string, total float32, tx *sqlx.Tx) (*C
 		username).StructScan(&result)
 
 	return &result, err
+}
+
+func (c *CartRepository) DeleteById(id int, tx *sqlx.Tx) (err error) {
+	_, err = tx.Exec(queryDeleteCart+" WHERE id = $1", id)
+	return
 }

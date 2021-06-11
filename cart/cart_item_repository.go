@@ -17,8 +17,8 @@ func NewCartItemRepository() *CartItemRepository {
 
 const (
 	queryCreateCartItem = `INSERT INTO public.cart_items
-		(cart_id, item_id, created_at, updated_at, qty)
-		VALUES($1, $2, now(), now(), $3) RETURNING *`
+		(cart_id, item_id, created_at, updated_at, qty, price)
+		VALUES($1, $2, now(), now(), $3, $4) RETURNING *`
 
 	querySelectCartItem = `SELECT
 		* 
@@ -29,8 +29,7 @@ const (
 		updated_at = now() 
 		WHERE cart_id = $2 AND item_id = $3 RETURNING *`
 
-	queryDeleteCartItem = `DELETE FROM cart_items
-		WHERE id = $1`
+	queryDeleteCartItem = `DELETE FROM cart_items `
 
 	queryExistsCartItem = `SELECT
 		COUNT(id) > 0
@@ -64,7 +63,8 @@ func (ci *CartItemRepository) Insert(request AddCartItemRequest, tx *sqlx.Tx) (*
 	err := tx.QueryRowx(queryCreateCartItem,
 		request.CartID,
 		request.ItemID,
-		request.Qty).StructScan(&result)
+		request.Qty,
+		request.Price).StructScan(&result)
 
 	return &result, err
 }
@@ -83,7 +83,7 @@ func (ci *CartItemRepository) Update(request AddCartItemRequest, tx *sqlx.Tx) (*
 func (ci *CartItemRepository) Delete(id int) error {
 	tx := ci.DB.MustBegin()
 
-	_, err := tx.Exec(queryDeleteCartItem,
+	_, err := tx.Exec(queryDeleteCartItem+" WHERE id = $1",
 		id)
 
 	if err != nil {
@@ -96,6 +96,12 @@ func (ci *CartItemRepository) Delete(id int) error {
 		return err
 	}
 	return nil
+}
+
+func (ci *CartItemRepository) DeleteByCartId(id int, tx *sqlx.Tx) error {
+	_, err := tx.Exec(queryDeleteCartItem+" WHERE cart_id = $1",
+		id)
+	return err
 }
 
 func (ci *CartItemRepository) GetByCartIDAndItemID(cartID int, itemID int) (cartItem CartItem, err error) {

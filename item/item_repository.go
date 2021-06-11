@@ -54,6 +54,12 @@ const (
 		SET
 			deleted_at = now()
 		WHERE id = $1`
+
+	queryUpdateQtyItem = `UPDATE public.items 
+		SET
+			updated_at = now(),
+			qty= $1 
+		WHERE id = $2 `
 )
 
 func (r *ItemRepository) GetAll() (items []Item, err error) {
@@ -142,4 +148,18 @@ func (r *ItemRepository) ExistsDuplicateSKUByID(sku string, id int) (exists bool
 func (r *ItemRepository) ExistsByID(id int) (exists bool, err error) {
 	err = r.DB.Get(&exists, queryExistItem+" WHERE id = $1 and deleted_at is null", id)
 	return
+}
+
+func (r *ItemRepository) GetByIDWithLock(id int, tx *sqlx.Tx) (item Item, err error) {
+	err = tx.Get(&item, querySelectItem+" WHERE id = $1 and deleted_at is null FOR UPDATE", id)
+	return
+}
+
+func (r *ItemRepository) UpdateWithLock(id int, qty int, tx *sqlx.Tx) error {
+
+	_, err := tx.Exec(queryUpdateQtyItem,
+		qty,
+		id)
+
+	return err
 }

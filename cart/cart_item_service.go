@@ -82,6 +82,7 @@ func (ci *cartItemService) AddToCart(request AddCartItemRequest) (result *CartIt
 			return nil, err
 		}
 	}
+	request.Price = item.Price
 
 	var cartItem *CartItem
 	// check if selected item is already exists on active cart

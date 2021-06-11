@@ -9,11 +9,13 @@ type CartItem struct {
 	CreatedAt time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 	Qty       int       `json:"qty"`
+	Price     float32   `json:"price"`
 }
 
 type AddCartItemRequest struct {
 	Username string `json:"username" validated:"required"`
 	ItemID   int    `json:"item_id" validated:"required"`
 	Qty      int    `json:"qty" validated:"required"`
+	Price    float32
 	CartID   int
 }
